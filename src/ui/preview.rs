@@ -20,7 +20,13 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         let uv = cover_uv(loaded.preview.size_vec2(), size);
         painter.image(loaded.preview.id(), rect, uv, WHITE);
     } else if selected.is_some() {
-        painter.text(rect.center(), Align2::CENTER_CENTER, "carregando…", FontId::monospace(13.0), style::DIM);
+        painter.text(
+            rect.center(),
+            Align2::CENTER_CENTER,
+            "carregando…",
+            FontId::monospace(13.0),
+            style::DIM,
+        );
     }
 
     match app.tab {
@@ -39,11 +45,22 @@ fn draw_bar(app: &App, painter: &egui::Painter, rect: egui::Rect) {
         Some(bar) => {
             let scale = rect.width() / bar.size_vec2().x;
             let bar_rect = egui::Rect::from_min_size(rect.min, bar.size_vec2() * scale);
-            painter.image(bar.id(), bar_rect, egui::Rect::from_min_max(egui::pos2(0.0, 0.0), egui::pos2(1.0, 1.0)), WHITE);
+            painter.image(
+                bar.id(),
+                bar_rect,
+                egui::Rect::from_min_max(egui::pos2(0.0, 0.0), egui::pos2(1.0, 1.0)),
+                WHITE,
+            );
         }
         None => {
             let msg = app.bar_error.as_deref().unwrap_or("barra não encontrada");
-            painter.text(rect.left_top() + egui::vec2(8.0, 6.0), Align2::LEFT_TOP, msg, FontId::monospace(10.0), style::DIM);
+            painter.text(
+                rect.left_top() + egui::vec2(8.0, 6.0),
+                Align2::LEFT_TOP,
+                msg,
+                FontId::monospace(10.0),
+                style::DIM,
+            );
         }
     }
 }
@@ -63,7 +80,13 @@ fn draw_lock_prompt(painter: &egui::Painter, rect: egui::Rect) {
     let c = box_rect.center();
     for (i, text) in [user.as_str(), now.as_str(), "Password: ********"].iter().enumerate() {
         let y = c.y + (i as f32 - 1.0) * line;
-        painter.text(egui::pos2(c.x, y), Align2::CENTER_CENTER, *text, font.clone(), style::TEXT);
+        painter.text(
+            egui::pos2(c.x, y),
+            Align2::CENTER_CENTER,
+            *text,
+            font.clone(),
+            style::TEXT,
+        );
     }
 }
 
@@ -71,7 +94,10 @@ fn info_line(app: &mut App, ui: &mut egui::Ui) {
     let Some(path) = app.selected.clone() else { return };
     ui.label(egui::RichText::new(file_name(&path)).color(egui::Color32::WHITE));
     if let Some(e) = app.entries.iter().find(|e| e.path == path) {
-        let mut parts = vec![if e.kind == MediaKind::Video { "vídeo" } else { "imagem" }.to_string(), format_size(e.size)];
+        let mut parts = vec![
+            if e.kind == MediaKind::Video { "vídeo" } else { "imagem" }.to_string(),
+            format_size(e.size),
+        ];
         if let Some(info) = app.loaded.get(&path).map(|l| &l.info) {
             if let Some(d) = info.duration_s {
                 parts.push(format_duration(d));

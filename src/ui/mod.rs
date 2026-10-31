@@ -205,7 +205,9 @@ impl App {
         let p = self.p.clone();
         match self.tab {
             Tab::Desktop => {
-                self.job = Some(Job::StartTest(self.spawn(move || TestSession::start(&p, &file, Instant::now()))));
+                self.job = Some(Job::StartTest(
+                    self.spawn(move || TestSession::start(&p, &file, Instant::now())),
+                ));
                 self.status = "indo para um workspace vazio…".into();
             }
             Tab::Lock => {
@@ -339,13 +341,24 @@ impl eframe::App for App {
             }
         }
 
-        egui::Panel::top("tabs").frame(style::bar_frame()).show(ui, |ui| self.tabs_ui(ui));
-        egui::Panel::bottom("status").frame(style::status_frame()).show(ui, |ui| {
-            ui.label(egui::RichText::new(&self.status).color(style::DIM).small());
-        });
-        egui::Panel::bottom("gallery").frame(style::gallery_frame()).show(ui, |ui| gallery::show(self, ui));
-        egui::Panel::right("side").exact_size(300.0).frame(style::side_frame()).show(ui, |ui| side::show(self, ui));
-        egui::CentralPanel::default().frame(style::central_frame()).show(ui, |ui| preview::show(self, ui));
+        egui::Panel::top("tabs")
+            .frame(style::bar_frame())
+            .show(ui, |ui| self.tabs_ui(ui));
+        egui::Panel::bottom("status")
+            .frame(style::status_frame())
+            .show(ui, |ui| {
+                ui.label(egui::RichText::new(&self.status).color(style::DIM).small());
+            });
+        egui::Panel::bottom("gallery")
+            .frame(style::gallery_frame())
+            .show(ui, |ui| gallery::show(self, ui));
+        egui::Panel::right("side")
+            .exact_size(300.0)
+            .frame(style::side_frame())
+            .show(ui, |ui| side::show(self, ui));
+        egui::CentralPanel::default()
+            .frame(style::central_frame())
+            .show(ui, |ui| preview::show(self, ui));
 
         if self.busy() || self.loaded.len() + self.failed.len() < self.entries.len() {
             ctx.request_repaint_after(Duration::from_millis(100));
@@ -396,7 +409,9 @@ impl App {
 }
 
 pub fn file_name(path: &Path) -> String {
-    path.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default()
+    path.file_name()
+        .map(|n| n.to_string_lossy().into_owned())
+        .unwrap_or_default()
 }
 
 pub fn format_size(bytes: u64) -> String {

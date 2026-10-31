@@ -42,7 +42,11 @@ pub fn load(p: &Paths) -> Selection {
     let lock = read_choice(&p.link_lock());
     // mesma ordem do lock.sh: sem link lock, o bloqueio segue o desktop
     let lock_same_as_desktop = lock.is_none();
-    Selection { desktop, lock, lock_same_as_desktop }
+    Selection {
+        desktop,
+        lock,
+        lock_same_as_desktop,
+    }
 }
 
 #[cfg(test)]
@@ -106,7 +110,9 @@ mod tests {
         // com link lock, mudar o desktop não chega ao bloqueio (lock.sh lê o
         // lock primeiro): não é "igual", mesmo apontando para o mesmo arquivo
         let dir = tempfile::tempdir().unwrap();
-        let p = Paths { home: dir.path().to_path_buf() };
+        let p = Paths {
+            home: dir.path().to_path_buf(),
+        };
         let target = touch(dir.path(), "a.mp4");
         set_choice(&p.link_desktop(), &target).unwrap();
         set_choice(&p.link_lock(), &target).unwrap();
@@ -116,7 +122,9 @@ mod tests {
     #[test]
     fn load_same_as_desktop_when_no_lock_link() {
         let dir = tempfile::tempdir().unwrap();
-        let p = Paths { home: dir.path().to_path_buf() };
+        let p = Paths {
+            home: dir.path().to_path_buf(),
+        };
         let target = touch(dir.path(), "a.mp4");
         set_choice(&p.link_desktop(), &target).unwrap();
 

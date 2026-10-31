@@ -14,6 +14,8 @@ CARGO="$(command -v cargo || echo "$HOME/.cargo/bin/cargo")"
 install -Dm755 target/release/rustwallp "$HOME/.local/bin/rustwallp"
 install -Dm644 assets/rustwallp.svg "$HOME/.local/share/icons/hicolor/scalable/apps/rustwallp.svg"
 mkdir -p "$HOME/.local/share/applications"
-sed "s|@HOME@|$HOME|g" assets/rustwallp.desktop > "$HOME/.local/share/applications/rustwallp.desktop"
+sed -e "s|@EXEC@|$HOME/.local/bin/rustwallp|" \
+	-e "s|@ICON@|$HOME/.local/share/icons/hicolor/scalable/apps/rustwallp.svg|" \
+	assets/rustwallp.desktop > "$HOME/.local/share/applications/rustwallp.desktop"
 
 echo "rustwallp instalado. Abra pelo menu (Mod+D → Wallpapers) ou rode: ~/.local/bin/rustwallp"

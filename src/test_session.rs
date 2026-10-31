@@ -61,7 +61,10 @@ impl TestSession {
             p: p.clone(),
             file: file.to_path_buf(),
             origin,
-            countdown: Countdown { started: now, total: TEST_DURATION },
+            countdown: Countdown {
+                started: now,
+                total: TEST_DURATION,
+            },
         })
     }
 
@@ -100,13 +103,19 @@ mod tests {
     use super::*;
 
     fn countdown(t0: Instant) -> Countdown {
-        Countdown { started: t0, total: TEST_DURATION }
+        Countdown {
+            started: t0,
+            total: TEST_DURATION,
+        }
     }
 
     #[test]
     fn remaining_counts_down() {
         let t0 = Instant::now();
-        assert_eq!(countdown(t0).remaining(t0 + Duration::from_secs(5)), Duration::from_secs(10));
+        assert_eq!(
+            countdown(t0).remaining(t0 + Duration::from_secs(5)),
+            Duration::from_secs(10)
+        );
     }
 
     #[test]

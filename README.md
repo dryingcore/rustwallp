@@ -1,5 +1,7 @@
 # rustwallp
 
+[![CI](https://github.com/dryingcore/rustwallp/actions/workflows/ci.yml/badge.svg)](https://github.com/dryingcore/rustwallp/actions/workflows/ci.yml)
+
 App desktop em Rust para escolher o **wallpaper da área de trabalho** e o da
 **tela de bloqueio** num desktop **i3 + polybar**. Aceita vídeos (que tocam em
 loop no fundo) e imagens.
@@ -80,22 +82,54 @@ rm ~/.config/wallpaper/desktop ~/.config/wallpaper/lock
 
 ## Requisitos
 
-| O quê | Por quê | Como instalar |
-|---|---|---|
-| Rust (estável) | compilar | `curl https://sh.rustup.rs -sSf \| sh` |
-| `libgtk-3-dev` | janela de escolher arquivo ("Adicionar") | `sudo apt install libgtk-3-dev` |
-| `ffmpeg` (`ffmpeg` + `ffprobe`) | miniaturas e duração dos vídeos | `sudo apt install ffmpeg` |
-| `feh` | mostrar imagens paradas no fundo | `sudo apt install feh` |
-| `mpv`, `xwinwrap` | tocar vídeo no fundo | já fazem parte do dotfiles |
-| `xsecurelock` | tela de bloqueio com vídeo | já faz parte do dotfiles |
-| i3 + polybar | o ambiente | já fazem parte do dotfiles |
-| scripts do dotfiles atualizados | leem os links | `start-wallpaper.sh`, `lock.sh` e `saver_wallpaper.sh` do [dotfiles](https://github.com/dryingcore/dotfiles) |
+- **Debian 12 ou 13**, com **i3 + polybar** (X11).
+- Os **scripts de wallpaper do [dotfiles](https://github.com/dryingcore/dotfiles)**,
+  na versão que lê `~/.config/wallpaper/desktop` e `lock`
+  (`start-wallpaper.sh`, `lock.sh`, `saver_wallpaper.sh`) e o `xwinwrap`.
+  Se você usa o dotfiles, já tem.
 
-Os scripts precisam ser a versão que lê os links. Se você usa o dotfiles, já é.
+O resto (`ffmpeg`, `feh`, `mpv`, GTK3 e as bibliotecas de X11/GPU) o pacote
+`.deb` instala sozinho.
 
 ---
 
 ## Instalação
+
+### Pelo pacote `.deb` (recomendado)
+
+1. Baixe o `rustwallp_<versão>_amd64.deb` da [última versão](https://github.com/dryingcore/rustwallp/releases/latest).
+2. Instale com o apt, que também instala as dependências:
+
+   ```bash
+   sudo apt install ./rustwallp_*_amd64.deb
+   ```
+
+3. Abra pelo menu de apps (`Mod+D`) → **Wallpapers**, ou rode `rustwallp` no terminal.
+
+Pelo terminal, de uma vez:
+
+```bash
+cd /tmp && gh release download --repo dryingcore/rustwallp --pattern '*.deb' \
+  && sudo apt install ./rustwallp_*_amd64.deb
+```
+
+Pelo dotfiles: `cd ~/dotfiles && ./install.sh rustwallp` (faz o mesmo).
+
+O pacote instala só isto:
+
+| Arquivo | O que é |
+|---|---|
+| `/usr/bin/rustwallp` | o programa |
+| `/usr/share/applications/rustwallp.desktop` | o atalho do menu ("Wallpapers") |
+| `/usr/share/icons/hicolor/scalable/apps/rustwallp.svg` | o ícone |
+| `/usr/share/doc/rustwallp/copyright` | a licença |
+
+**Atualizar:** baixe o `.deb` novo e rode o mesmo `sudo apt install ./…deb`.
+
+### Compilando, só na sua `$HOME` (sem `sudo`)
+
+Precisa do Rust (`curl https://sh.rustup.rs -sSf | sh`) e de
+`sudo apt install libgtk-3-dev ffmpeg feh mpv`.
 
 ```bash
 git clone https://github.com/dryingcore/rustwallp.git
@@ -103,21 +137,11 @@ cd rustwallp
 ./install.sh
 ```
 
-Pelo dotfiles também dá: `cd ~/dotfiles && ./install.sh rustwallp`.
+Compila em release (alguns minutos na primeira vez) e grava três arquivos:
+`~/.local/bin/rustwallp`, o ícone em `~/.local/share/icons/hicolor/scalable/apps/`
+e o atalho em `~/.local/share/applications/`. Atualizar: `git pull && ./install.sh`.
 
-O `install.sh` compila em modo release (alguns minutos na primeira vez) e grava
-**exatamente três arquivos**, todos na sua `$HOME`, sem `sudo`:
-
-| Arquivo | O que é |
-|---|---|
-| `~/.local/bin/rustwallp` | o programa |
-| `~/.local/share/icons/hicolor/scalable/apps/rustwallp.svg` | o ícone |
-| `~/.local/share/applications/rustwallp.desktop` | o atalho do menu |
-
-Depois disso ele aparece no menu de apps (`Mod+D`) como **Wallpapers**. Também
-dá para abrir pelo terminal: `~/.local/bin/rustwallp`.
-
-**Atualizar:** `git pull && ./install.sh`.
+Use **um** dos dois jeitos. Se tiver os dois, o menu mostra o da sua `$HOME`.
 
 ---
 
@@ -192,32 +216,36 @@ Para apagar ou renomear wallpapers, mexa direto na pasta `~/Wallpapers`.
 
 ## Desinstalação
 
+### Instalado pelo `.deb`
+
+```bash
+sudo apt remove rustwallp
+rm -rf ~/.cache/rustwallp     # opcional: as miniaturas
+```
+
+O apt apaga exatamente os arquivos que o pacote instalou. Ele não mexe na sua
+`$HOME`, então `~/Wallpapers` e a sua escolha de wallpaper ficam como estão.
+
+### Instalado pelo `install.sh`
+
 ```bash
 cd rustwallp
 ./uninstall.sh
 ```
 
-Apaga os três arquivos da instalação e o cache `~/.cache/rustwallp/`. **Nunca**
-mexe em `~/Wallpapers` nem nos scripts. Depois ele pergunta o que fazer com a
-sua escolha de wallpaper:
+Apaga os três arquivos da instalação e o cache `~/.cache/rustwallp/`.
 
-| Opção | O que acontece |
-|---|---|
-| manter (padrão) | os scripts continuam mostrando o último wallpaper escolhido |
-| apagar | volta o vídeo padrão no próximo login (ou `Mod+Shift+R`) |
+### A escolha de wallpaper
 
-Sem perguntar: `./uninstall.sh --keep` ou `./uninstall.sh --links`.
-
-Se você apagou a pasta do repositório, dá para remover à mão:
+Nos dois casos, os links `~/.config/wallpaper/desktop` e `lock` ficam, e os
+scripts continuam mostrando o último wallpaper escolhido. Para voltar ao vídeo
+padrão:
 
 ```bash
-rm -f ~/.local/bin/rustwallp \
-      ~/.local/share/icons/hicolor/scalable/apps/rustwallp.svg \
-      ~/.local/share/applications/rustwallp.desktop
-rm -rf ~/.cache/rustwallp
-# opcional: voltar ao vídeo padrão
 rm -f ~/.config/wallpaper/desktop ~/.config/wallpaper/lock
 ```
+
+(o `./uninstall.sh` pergunta isso; sem perguntar: `--keep` ou `--links`).
 
 A remoção foi testada de verdade: instalar, escolher um wallpaper, desinstalar
 e conferir por hash que os scripts e as configs do i3, da polybar e do
@@ -328,6 +356,30 @@ Falta o GTK3 em tempo de compilação: `sudo apt install libgtk-3-dev` e rode o
 ---
 
 ## Desenvolvimento
+
+### CI
+
+A cada push e pull request, o [GitHub Actions](.github/workflows/ci.yml) roda,
+no Ubuntu 22.04:
+
+1. `cargo fmt --check` (formatação);
+2. `cargo clippy --all-targets -- -D warnings`;
+3. `cargo test` (a lógica: links, workspace vazio, miniaturas, aplicar/julgar,
+   contagem do teste, nomes livres no "Adicionar");
+4. `packaging/build-deb.sh`, guardando o `.deb` como artefato da execução.
+
+Os testes marcados com `#[ignore]` precisam da sessão real e só rodam à mão.
+
+### Publicar uma versão
+
+1. Suba a versão em `Cargo.toml` (`version = "0.2.0"`) e rode `cargo build` para atualizar o `Cargo.lock`.
+2. `git commit -am "versão 0.2.0" && git tag v0.2.0 && git push --follow-tags`
+3. O CI roda tudo e, por ser uma tag `v*`, cria a versão no GitHub com o `.deb`
+   anexado (notas em [`packaging/release-notes.md`](packaging/release-notes.md)).
+
+Para gerar o `.deb` localmente: `packaging/build-deb.sh` (sai em `dist/`).
+
+### Comandos
 
 ```bash
 cargo run                         # roda sem instalar

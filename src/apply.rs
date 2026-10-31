@@ -50,7 +50,10 @@ fn run_start_script(p: &Paths, show: Option<&Path>) -> bool {
 }
 
 fn xwinwrap_running() -> bool {
-    Command::new("pgrep").args(["-x", "xwinwrap"]).status().is_ok_and(|s| s.success())
+    Command::new("pgrep")
+        .args(["-x", "xwinwrap"])
+        .status()
+        .is_ok_and(|s| s.success())
 }
 
 /// Roda o script e julga o resultado para `file` (o arquivo que deve estar na tela).
@@ -129,7 +132,11 @@ pub fn test_lock(p: &Paths, file: &Path) -> Result<(), String> {
         .env("RUSTWALLP_LOCK_FILE", file)
         .status()
         .map_err(|e| format!("lock.sh não rodou: {e}"))?;
-    if status.success() { Ok(()) } else { Err("a tela de bloqueio terminou com erro".into()) }
+    if status.success() {
+        Ok(())
+    } else {
+        Err("a tela de bloqueio terminou com erro".into())
+    }
 }
 
 #[cfg(test)]
@@ -138,12 +145,18 @@ mod tests {
 
     #[test]
     fn missing_file_fails() {
-        assert!(matches!(judge(false, true, MediaKind::Image, false), Outcome::Failed(_)));
+        assert!(matches!(
+            judge(false, true, MediaKind::Image, false),
+            Outcome::Failed(_)
+        ));
     }
 
     #[test]
     fn script_error_fails() {
-        assert!(matches!(judge(true, false, MediaKind::Image, false), Outcome::Failed(_)));
+        assert!(matches!(
+            judge(true, false, MediaKind::Image, false),
+            Outcome::Failed(_)
+        ));
     }
 
     #[test]
@@ -164,7 +177,9 @@ mod tests {
     #[test]
     fn set_lock_none_removes_link() {
         let dir = tempfile::tempdir().unwrap();
-        let p = Paths { home: dir.path().to_path_buf() };
+        let p = Paths {
+            home: dir.path().to_path_buf(),
+        };
         let file = dir.path().join("a.png");
         fs::write(&file, b"x").unwrap();
         set_lock(&p, Some(&file)).unwrap();
@@ -179,11 +194,17 @@ mod tests {
         // o xwinwrap fica rodando depois do script; se herdar nossa saída,
         // prende quem lê dela (e amarra o wallpaper ao app)
         let dir = tempfile::tempdir().unwrap();
-        let p = Paths { home: dir.path().to_path_buf() };
+        let p = Paths {
+            home: dir.path().to_path_buf(),
+        };
         let script = p.start_script();
         fs::create_dir_all(script.parent().unwrap()).unwrap();
         let pidfile = dir.path().join("pid");
-        fs::write(&script, format!("#!/bin/sh\nsleep 30 &\necho $! > '{}'\n", pidfile.display())).unwrap();
+        fs::write(
+            &script,
+            format!("#!/bin/sh\nsleep 30 &\necho $! > '{}'\n", pidfile.display()),
+        )
+        .unwrap();
         fs::set_permissions(&script, std::os::unix::fs::PermissionsExt::from_mode(0o755)).unwrap();
 
         assert!(run_start_script(&p, None));
@@ -196,11 +217,17 @@ mod tests {
     /// $HOME falsa com um start-wallpaper.sh que só anota a variável recebida.
     fn fake_home() -> (tempfile::TempDir, Paths, PathBuf) {
         let dir = tempfile::tempdir().unwrap();
-        let p = Paths { home: dir.path().to_path_buf() };
+        let p = Paths {
+            home: dir.path().to_path_buf(),
+        };
         let script = p.start_script();
         fs::create_dir_all(script.parent().unwrap()).unwrap();
         let log = dir.path().join("env.log");
-        fs::write(&script, format!("#!/bin/sh\necho \"[$RUSTWALLP_DESKTOP_FILE]\" > '{}'\n", log.display())).unwrap();
+        fs::write(
+            &script,
+            format!("#!/bin/sh\necho \"[$RUSTWALLP_DESKTOP_FILE]\" > '{}'\n", log.display()),
+        )
+        .unwrap();
         fs::set_permissions(&script, std::os::unix::fs::PermissionsExt::from_mode(0o755)).unwrap();
         (dir, p, log)
     }
@@ -215,7 +242,10 @@ mod tests {
         set_choice(&p.link_desktop(), &saved).unwrap();
 
         assert_eq!(preview_desktop(&p, &test), Outcome::Ok);
-        assert_eq!(fs::read_to_string(&log).unwrap().trim(), format!("[{}]", test.display()));
+        assert_eq!(
+            fs::read_to_string(&log).unwrap().trim(),
+            format!("[{}]", test.display())
+        );
         assert_eq!(read_choice(&p.link_desktop()), Some(fs::canonicalize(&saved).unwrap()));
     }
 

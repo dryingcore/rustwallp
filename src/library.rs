@@ -44,7 +44,12 @@ pub fn scan(dir: &Path) -> io::Result<Vec<Entry>> {
         if !meta.is_file() {
             continue;
         }
-        entries.push(Entry { path, kind, size: meta.len(), mtime: meta.modified()? });
+        entries.push(Entry {
+            path,
+            kind,
+            size: meta.len(),
+            mtime: meta.modified()?,
+        });
     }
     entries.sort_by(|a, b| a.path.file_name().cmp(&b.path.file_name()));
     Ok(entries)

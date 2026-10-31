@@ -15,7 +15,10 @@ pub fn free_name(dir: &Path, file_name: &OsStr) -> PathBuf {
     }
     let name = Path::new(file_name);
     let stem = name.file_stem().unwrap_or(file_name).to_string_lossy();
-    let ext = name.extension().map(|e| format!(".{}", e.to_string_lossy())).unwrap_or_default();
+    let ext = name
+        .extension()
+        .map(|e| format!(".{}", e.to_string_lossy()))
+        .unwrap_or_default();
     (1..)
         .map(|n| dir.join(format!("{stem}-{n}{ext}")))
         .find(|candidate| !candidate.exists())
@@ -24,9 +27,14 @@ pub fn free_name(dir: &Path, file_name: &OsStr) -> PathBuf {
 
 pub fn import(dir: &Path, src: &Path) -> io::Result<PathBuf> {
     if classify(src).is_none() {
-        return Err(io::Error::new(io::ErrorKind::InvalidInput, "não é vídeo nem imagem aceito"));
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidInput,
+            "não é vídeo nem imagem aceito",
+        ));
     }
-    let file_name = src.file_name().ok_or_else(|| io::Error::new(io::ErrorKind::InvalidInput, "sem nome de arquivo"))?;
+    let file_name = src
+        .file_name()
+        .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidInput, "sem nome de arquivo"))?;
     fs::create_dir_all(dir)?;
     let dest = free_name(dir, file_name);
     fs::copy(src, &dest)?;

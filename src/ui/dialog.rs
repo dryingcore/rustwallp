@@ -26,46 +26,58 @@ pub fn test_dialog(ctx: &egui::Context, session: &TestSession) -> Option<Decisio
     }
     let left = session.remaining(now).as_secs() + 1;
     ctx.request_repaint_after(std::time::Duration::from_millis(200));
-    ctx.show_viewport_immediate(ViewportId::from_hash_of("rustwallp-teste"), dialog_builder("rustwallp — teste"), |ui, _| {
-        let mut decision = None;
-        egui::CentralPanel::default().frame(style::central_frame()).show(ui, |ui| {
-            ui.label("Gostou deste wallpaper?");
-            ui.label(egui::RichText::new(format!("Voltando ao anterior em {left} s")).color(style::DIM));
-            ui.horizontal(|ui| {
-                if ui.button("✓ Manter").clicked() {
-                    decision = Some(Decision::Keep);
-                }
-                if ui.button("↶ Voltar").clicked() {
-                    decision = Some(Decision::Revert);
-                }
-            });
-        });
-        if ui.ctx().input(|i| i.viewport().close_requested()) {
-            decision = Some(Decision::Revert);
-        }
-        decision
-    })
+    ctx.show_viewport_immediate(
+        ViewportId::from_hash_of("rustwallp-teste"),
+        dialog_builder("rustwallp — teste"),
+        |ui, _| {
+            let mut decision = None;
+            egui::CentralPanel::default()
+                .frame(style::central_frame())
+                .show(ui, |ui| {
+                    ui.label("Gostou deste wallpaper?");
+                    ui.label(egui::RichText::new(format!("Voltando ao anterior em {left} s")).color(style::DIM));
+                    ui.horizontal(|ui| {
+                        if ui.button("✓ Manter").clicked() {
+                            decision = Some(Decision::Keep);
+                        }
+                        if ui.button("↶ Voltar").clicked() {
+                            decision = Some(Decision::Revert);
+                        }
+                    });
+                });
+            if ui.ctx().input(|i| i.viewport().close_requested()) {
+                decision = Some(Decision::Revert);
+            }
+            decision
+        },
+    )
 }
 
 /// Depois do teste da tela de bloqueio: `Some(true)` = manter.
 pub fn keep_lock_dialog(ctx: &egui::Context, file: &Path) -> Option<bool> {
-    ctx.show_viewport_immediate(ViewportId::from_hash_of("rustwallp-lock"), dialog_builder("rustwallp — tela de bloqueio"), |ui, _| {
-        let mut answer = None;
-        egui::CentralPanel::default().frame(style::central_frame()).show(ui, |ui| {
-            ui.label("Manter este como tela de bloqueio?");
-            ui.label(egui::RichText::new(file_name(file)).color(style::DIM));
-            ui.horizontal(|ui| {
-                if ui.button("✓ Manter").clicked() {
-                    answer = Some(true);
-                }
-                if ui.button("Não").clicked() {
-                    answer = Some(false);
-                }
-            });
-        });
-        if ui.ctx().input(|i| i.viewport().close_requested()) {
-            answer = Some(false);
-        }
-        answer
-    })
+    ctx.show_viewport_immediate(
+        ViewportId::from_hash_of("rustwallp-lock"),
+        dialog_builder("rustwallp — tela de bloqueio"),
+        |ui, _| {
+            let mut answer = None;
+            egui::CentralPanel::default()
+                .frame(style::central_frame())
+                .show(ui, |ui| {
+                    ui.label("Manter este como tela de bloqueio?");
+                    ui.label(egui::RichText::new(file_name(file)).color(style::DIM));
+                    ui.horizontal(|ui| {
+                        if ui.button("✓ Manter").clicked() {
+                            answer = Some(true);
+                        }
+                        if ui.button("Não").clicked() {
+                            answer = Some(false);
+                        }
+                    });
+                });
+            if ui.ctx().input(|i| i.viewport().close_requested()) {
+                answer = Some(false);
+            }
+            answer
+        },
+    )
 }

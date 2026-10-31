@@ -16,7 +16,11 @@ pub fn capture() -> Result<BarImage, String> {
     let root = conn.setup().roots[screen].root;
     let win = find_polybar(&conn, root)?.ok_or("barra não encontrada")?;
 
-    let geo = conn.get_geometry(win).map_err(|e| e.to_string())?.reply().map_err(|e| e.to_string())?;
+    let geo = conn
+        .get_geometry(win)
+        .map_err(|e| e.to_string())?
+        .reply()
+        .map_err(|e| e.to_string())?;
     let (w, h) = (geo.width, geo.height);
     let img = conn
         .get_image(ImageFormat::Z_PIXMAP, win, 0, 0, w, h, !0)
@@ -25,16 +29,28 @@ pub fn capture() -> Result<BarImage, String> {
         .map_err(|e| format!("não deu para copiar a barra: {e}"))?;
 
     // Z_PIXMAP de 24/32 bits vem como BGRX: troca para RGBA opaco
-    let rgba = img.data.chunks_exact(4).flat_map(|px| [px[2], px[1], px[0], 255]).collect::<Vec<_>>();
+    let rgba = img
+        .data
+        .chunks_exact(4)
+        .flat_map(|px| [px[2], px[1], px[0], 255])
+        .collect::<Vec<_>>();
     if rgba.len() != w as usize * h as usize * 4 {
         return Err(format!("formato de imagem inesperado ({} bits)", img.depth));
     }
-    Ok(BarImage { width: w as usize, height: h as usize, rgba })
+    Ok(BarImage {
+        width: w as usize,
+        height: h as usize,
+        rgba,
+    })
 }
 
 /// Procura em profundidade: o i3 põe a polybar (dock) dentro de um "i3-frame".
 fn find_polybar(conn: &impl Connection, parent: Window) -> Result<Option<Window>, String> {
-    let tree = conn.query_tree(parent).map_err(|e| e.to_string())?.reply().map_err(|e| e.to_string())?;
+    let tree = conn
+        .query_tree(parent)
+        .map_err(|e| e.to_string())?
+        .reply()
+        .map_err(|e| e.to_string())?;
     for &win in &tree.children {
         let class = conn
             .get_property(false, win, AtomEnum::WM_CLASS, AtomEnum::STRING, 0, 64)

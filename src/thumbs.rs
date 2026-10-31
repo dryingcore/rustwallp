@@ -64,7 +64,12 @@ mod tests {
         let src = dir.path().join("a.png");
         image::RgbImage::new(960, 540).save(&src).unwrap();
         let meta = std::fs::metadata(&src).unwrap();
-        let e = Entry { path: src.clone(), kind: MediaKind::Image, size: meta.len(), mtime: meta.modified().unwrap() };
+        let e = Entry {
+            path: src.clone(),
+            kind: MediaKind::Image,
+            size: meta.len(),
+            mtime: meta.modified().unwrap(),
+        };
 
         let thumbs = Thumbs::new(dir.path().join("cache"));
         thumbs.request(e);

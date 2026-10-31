@@ -34,7 +34,10 @@ pub fn apply(ctx: &egui::Context) {
 }
 
 pub fn bar_frame() -> Frame {
-    Frame::new().fill(BG).inner_margin(Margin::symmetric(16, 10)).stroke(Stroke::new(1.0, LINE))
+    Frame::new()
+        .fill(BG)
+        .inner_margin(Margin::symmetric(16, 10))
+        .stroke(Stroke::new(1.0, LINE))
 }
 
 pub fn central_frame() -> Frame {
@@ -45,13 +48,21 @@ pub fn side_frame() -> Frame {
     Frame::new()
         .fill(PANEL)
         .inner_margin(Margin::same(14))
-        .outer_margin(Margin { left: 0, right: 16, top: 16, bottom: 16 })
+        .outer_margin(Margin {
+            left: 0,
+            right: 16,
+            top: 16,
+            bottom: 16,
+        })
         .stroke(Stroke::new(1.0, LINE))
         .corner_radius(CornerRadius::same(6))
 }
 
 pub fn gallery_frame() -> Frame {
-    Frame::new().fill(BG).inner_margin(Margin::symmetric(16, 14)).stroke(Stroke::new(1.0, LINE))
+    Frame::new()
+        .fill(BG)
+        .inner_margin(Margin::symmetric(16, 14))
+        .stroke(Stroke::new(1.0, LINE))
 }
 
 pub fn status_frame() -> Frame {

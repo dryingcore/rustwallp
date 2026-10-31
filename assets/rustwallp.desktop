@@ -2,8 +2,8 @@
 Name=Wallpapers
 GenericName=Wallpaper
 Comment=Escolher o wallpaper da área de trabalho e da tela de bloqueio
-Exec=@HOME@/.local/bin/rustwallp
-Icon=@HOME@/.local/share/icons/hicolor/scalable/apps/rustwallp.svg
+Exec=@EXEC@
+Icon=@ICON@
 Type=Application
 Terminal=false
 Categories=Settings;DesktopSettings;

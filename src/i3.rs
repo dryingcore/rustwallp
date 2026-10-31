@@ -10,8 +10,7 @@ pub struct Workspace {
 
 /// Lê a resposta de `i3-msg -t get_workspaces`.
 pub fn parse_workspaces(json: &str) -> Result<Vec<Workspace>, String> {
-    let value: serde_json::Value =
-        serde_json::from_str(json).map_err(|e| format!("resposta do i3 inválida: {e}"))?;
+    let value: serde_json::Value = serde_json::from_str(json).map_err(|e| format!("resposta do i3 inválida: {e}"))?;
     let list = value.as_array().ok_or("resposta do i3 não é uma lista")?;
     list.iter()
         .map(|w| {
@@ -52,7 +51,11 @@ pub fn goto(name: &str) -> Result<(), String> {
         .map_err(|e| format!("i3-msg não rodou: {e}"))?
         .status
         .success();
-    if ok { Ok(()) } else { Err(format!("i3 não foi para o workspace {name}")) }
+    if ok {
+        Ok(())
+    } else {
+        Err(format!("i3 não foi para o workspace {name}"))
+    }
 }
 
 #[cfg(test)]
@@ -60,7 +63,13 @@ mod tests {
     use super::*;
 
     fn ws(names: &[&str]) -> Vec<Workspace> {
-        names.iter().map(|n| Workspace { name: n.to_string(), focused: false }).collect()
+        names
+            .iter()
+            .map(|n| Workspace {
+                name: n.to_string(),
+                focused: false,
+            })
+            .collect()
     }
 
     #[test]
@@ -70,7 +79,13 @@ mod tests {
                        {"id":3,"num":5,"name":"5","visible":false,"focused":false,"urgent":false}]"#;
         let list = parse_workspaces(json).unwrap();
         assert_eq!(list.len(), 3);
-        assert_eq!(list[1], Workspace { name: "2".into(), focused: true });
+        assert_eq!(
+            list[1],
+            Workspace {
+                name: "2".into(),
+                focused: true
+            }
+        );
     }
 
     #[test]

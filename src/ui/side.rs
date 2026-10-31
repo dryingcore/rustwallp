@@ -13,10 +13,12 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             let (rect, response) = ui.allocate_exact_size(size, Sense::click());
             match app.loaded.get(&path) {
                 Some(l) => {
-                    ui.painter_at(rect).image(l.thumb.id(), rect, cover_uv(l.thumb.size_vec2(), size), WHITE);
+                    ui.painter_at(rect)
+                        .image(l.thumb.id(), rect, cover_uv(l.thumb.size_vec2(), size), WHITE);
                 }
                 None => {
-                    ui.painter_at(rect).rect_filled(rect, 4.0, egui::Color32::from_rgb(0x1a, 0x1a, 0x1a));
+                    ui.painter_at(rect)
+                        .rect_filled(rect, 4.0, egui::Color32::from_rgb(0x1a, 0x1a, 0x1a));
                 }
             }
             if response.clicked() {
@@ -33,7 +35,10 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
     ui.add_space(8.0);
     style::section(ui, "Tela de bloqueio");
     let mut same = app.sel.lock_same_as_desktop;
-    if ui.add_enabled(!app.busy(), egui::Checkbox::new(&mut same, "Igual à área de trabalho")).changed() {
+    if ui
+        .add_enabled(!app.busy(), egui::Checkbox::new(&mut same, "Igual à área de trabalho"))
+        .changed()
+    {
         app.set_lock_same(same);
     }
 

@@ -35,7 +35,11 @@ pub fn probe(path: &Path, kind: MediaKind) -> Option<Info> {
     match kind {
         MediaKind::Image => {
             let (width, height) = image::image_dimensions(path).ok()?;
-            Some(Info { duration_s: None, width, height })
+            Some(Info {
+                duration_s: None,
+                width,
+                height,
+            })
         }
         MediaKind::Video => {
             let out = Command::new("ffprobe")
@@ -53,7 +57,11 @@ fn cache_key(e: &Entry) -> u64 {
     let mut h = DefaultHasher::new();
     e.path.hash(&mut h);
     e.size.hash(&mut h);
-    e.mtime.duration_since(UNIX_EPOCH).unwrap_or_default().as_nanos().hash(&mut h);
+    e.mtime
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_nanos()
+        .hash(&mut h);
     h.finish()
 }
 
@@ -91,7 +99,11 @@ pub fn make_thumb(e: &Entry, info: &Info, out: &Path, width: u32) -> Result<(), 
                 .status()
                 .map_err(|err| format!("ffmpeg não rodou: {err}"))?
                 .success();
-            if ok { Ok(()) } else { Err(format!("ffmpeg falhou em {}", e.path.display())) }
+            if ok {
+                Ok(())
+            } else {
+                Err(format!("ffmpeg falhou em {}", e.path.display()))
+            }
         }
     }
 }
@@ -126,9 +138,18 @@ mod tests {
     #[test]
     fn thumb_key_changes_with_mtime() {
         let cache = Path::new("/c");
-        assert_ne!(thumb_path(cache, &entry("/w/a.mp4", 1)), thumb_path(cache, &entry("/w/a.mp4", 2)));
-        assert_eq!(thumb_path(cache, &entry("/w/a.mp4", 1)), thumb_path(cache, &entry("/w/a.mp4", 1)));
-        assert_ne!(thumb_path(cache, &entry("/w/a.mp4", 1)), preview_path(cache, &entry("/w/a.mp4", 1)));
+        assert_ne!(
+            thumb_path(cache, &entry("/w/a.mp4", 1)),
+            thumb_path(cache, &entry("/w/a.mp4", 2))
+        );
+        assert_eq!(
+            thumb_path(cache, &entry("/w/a.mp4", 1)),
+            thumb_path(cache, &entry("/w/a.mp4", 1))
+        );
+        assert_ne!(
+            thumb_path(cache, &entry("/w/a.mp4", 1)),
+            preview_path(cache, &entry("/w/a.mp4", 1))
+        );
     }
 
     #[test]
@@ -137,7 +158,12 @@ mod tests {
         let src = dir.path().join("big.png");
         image::RgbImage::new(1000, 500).save(&src).unwrap();
         let meta = std::fs::metadata(&src).unwrap();
-        let e = Entry { path: src.clone(), kind: MediaKind::Image, size: meta.len(), mtime: meta.modified().unwrap() };
+        let e = Entry {
+            path: src.clone(),
+            kind: MediaKind::Image,
+            size: meta.len(),
+            mtime: meta.modified().unwrap(),
+        };
         let info = probe(&src, MediaKind::Image).unwrap();
         let out = dir.path().join("t.jpg");
 
@@ -154,7 +180,12 @@ mod tests {
     fn real_video_thumb() {
         let src = crate::paths::Paths::from_env().default_wallpaper();
         let meta = std::fs::metadata(&src).unwrap();
-        let e = Entry { path: src.clone(), kind: MediaKind::Video, size: meta.len(), mtime: meta.modified().unwrap() };
+        let e = Entry {
+            path: src.clone(),
+            kind: MediaKind::Video,
+            size: meta.len(),
+            mtime: meta.modified().unwrap(),
+        };
         let info = probe(&src, MediaKind::Video).unwrap();
         let dir = tempfile::tempdir().unwrap();
         let out = dir.path().join("t.jpg");
