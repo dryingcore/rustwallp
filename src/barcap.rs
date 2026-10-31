@@ -28,12 +28,7 @@ pub fn capture() -> Result<BarImage, String> {
         .reply()
         .map_err(|e| format!("não deu para copiar a barra: {e}"))?;
 
-    // Z_PIXMAP de 24/32 bits vem como BGRX: troca para RGBA opaco
-    let rgba = img
-        .data
-        .chunks_exact(4)
-        .flat_map(|px| [px[2], px[1], px[0], 255])
-        .collect::<Vec<_>>();
+    let rgba = bgrx_to_rgba(&img.data);
     if rgba.len() != w as usize * h as usize * 4 {
         return Err(format!("formato de imagem inesperado ({} bits)", img.depth));
     }
@@ -68,8 +63,21 @@ fn find_polybar(conn: &impl Connection, parent: Window) -> Result<Option<Window>
     Ok(None)
 }
 
+/// Z_PIXMAP de 24/32 bits vem como BGRX: troca para RGBA opaco.
+pub fn bgrx_to_rgba(data: &[u8]) -> Vec<u8> {
+    unimplemented!()
+}
+
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn bgrx_becomes_opaque_rgba() {
+        assert_eq!(
+            super::bgrx_to_rgba(&[1, 2, 3, 9, 4, 5, 6, 9, 7]),
+            [3, 2, 1, 255, 6, 5, 4, 255]
+        );
+    }
+
     #[test]
     #[ignore = "precisa da sessão X com a polybar rodando"]
     fn captures_real_bar() {
