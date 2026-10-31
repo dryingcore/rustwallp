@@ -1,0 +1,20 @@
+[package]
+name = "rustwallp"
+version = "0.1.0"
+edition = "2021"
+description = "Escolhe o wallpaper (vídeo ou imagem) da área de trabalho e da tela de bloqueio no i3 + polybar"
+license = "MIT"
+
+[dependencies]
+eframe = "0.37"
+egui_extras = { version = "0.37", features = ["image"] }
+image = { version = "0.25", default-features = false, features = ["png", "jpeg", "webp"] }
+rfd = { version = "0.17", default-features = false, features = ["gtk3"] }
+x11rb = "0.14"
+serde_json = "1"
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.release]
+strip = true
