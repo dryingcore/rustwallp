@@ -65,7 +65,8 @@ fn find_polybar(conn: &impl Connection, parent: Window) -> Result<Option<Window>
 
 /// Z_PIXMAP de 24/32 bits vem como BGRX: troca para RGBA opaco.
 pub fn bgrx_to_rgba(data: &[u8]) -> Vec<u8> {
-    unimplemented!()
+    let (pixels, _resto) = data.as_chunks::<4>();
+    pixels.iter().flat_map(|px| [px[2], px[1], px[0], 255]).collect()
 }
 
 #[cfg(test)]
