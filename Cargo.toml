@@ -1,6 +1,6 @@
 [package]
 name = "rustwallp"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "Escolhe o wallpaper (vídeo ou imagem) da área de trabalho e da tela de bloqueio no i3 + polybar"
 license = "MIT"

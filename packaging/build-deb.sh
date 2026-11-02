@@ -6,7 +6,7 @@
 #
 # O pacote instala:
 #   /usr/bin/rustwallp
-#   /usr/share/applications/rustwallp.desktop   (aparece no menu como "Wallpapers")
+#   /usr/share/applications/rustwallp.desktop   (aparece no menu como "rustwallp")
 #   /usr/share/icons/hicolor/scalable/apps/rustwallp.svg
 #   /usr/share/doc/rustwallp/copyright
 # e `apt remove rustwallp` apaga exatamente isso.

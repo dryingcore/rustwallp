@@ -13,7 +13,7 @@ mod ui;
 fn main() -> eframe::Result {
     let options = eframe::NativeOptions {
         viewport: eframe::egui::ViewportBuilder::default()
-            .with_title("Wallpapers")
+            .with_title("rustwallp")
             .with_app_id("rustwallp")
             .with_inner_size([1280.0, 820.0])
             .with_min_inner_size([900.0, 600.0]),

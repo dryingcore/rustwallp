@@ -104,7 +104,7 @@ O resto (`ffmpeg`, `feh`, `mpv`, GTK3 e as bibliotecas de X11/GPU) o pacote
    sudo apt install ./rustwallp_*_amd64.deb
    ```
 
-3. Abra pelo menu de apps (`Mod+D`) → **Wallpapers**, ou rode `rustwallp` no terminal.
+3. Abra pelo menu de apps (`Mod+D`) → **rustwallp**, ou rode `rustwallp` no terminal.
 
 Pelo terminal, de uma vez:
 
@@ -120,7 +120,7 @@ O pacote instala só isto:
 | Arquivo | O que é |
 |---|---|
 | `/usr/bin/rustwallp` | o programa |
-| `/usr/share/applications/rustwallp.desktop` | o atalho do menu ("Wallpapers") |
+| `/usr/share/applications/rustwallp.desktop` | o atalho do menu ("rustwallp") |
 | `/usr/share/icons/hicolor/scalable/apps/rustwallp.svg` | o ícone |
 | `/usr/share/doc/rustwallp/copyright` | a licença |
 

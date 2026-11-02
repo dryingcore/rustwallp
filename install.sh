@@ -18,4 +18,4 @@ sed -e "s|@EXEC@|$HOME/.local/bin/rustwallp|" \
 	-e "s|@ICON@|$HOME/.local/share/icons/hicolor/scalable/apps/rustwallp.svg|" \
 	assets/rustwallp.desktop > "$HOME/.local/share/applications/rustwallp.desktop"
 
-echo "rustwallp instalado. Abra pelo menu (Mod+D → Wallpapers) ou rode: ~/.local/bin/rustwallp"
+echo "rustwallp instalado. Abra pelo menu (Mod+D → rustwallp) ou rode: ~/.local/bin/rustwallp"
